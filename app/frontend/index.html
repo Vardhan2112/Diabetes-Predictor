@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <script>
+        async function predictDiabetes() {
+            const age = document.getElementById('age').value;
+            const glucose = document.getElementById('glucose').value;
+            const insulin = document.getElementById('insulin').value;
+            const bmi = document.getElementById('bmi').value;
+            const modelType = document.querySelector('input[name="model"]:checked').value;
+
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    age: parseFloat(age),
+                    glucose: parseFloat(glucose),
+                    insulin: parseFloat(insulin),
+                    bmi: parseFloat(bmi),
+                    model: modelType
+                })
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerText = result.message;
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Diabetes Prediction</h2>
+        <form onsubmit="event.preventDefault(); predictDiabetes();">
+            <label for="age">Age:</label>
+            <input type="float" id="age" required><br>
+
+            <label for="glucose">Blood Sugar Level (Glucose):</label>
+            <input type="float" id="glucose" required><br>
+
+            <label for="insulin">Insulin Level:</label>
+            <input type="float" id="insulin" required><br>
+
+            <label for="bmi">BMI:</label>
+            <input type="float" id="bmi" required><br>
+
+            <label>Select Model:</label><br>
+            <div class="radio-group">
+                <div>
+                    <input type="radio" id="naive_bayes" name="model" value="naive_bayes" checked>
+                    <label for="naive_bayes">Naive Bayes</label>
+                </div>
+                <div>
+                    <input type="radio" id="perceptron" name="model" value="perceptron">
+                    <label for="perceptron">Perceptron</label>
+                </div>
+                <div>
+                    <input type="radio" id="custom_perceptron" name="model" value="custom_perceptron">
+                    <label for="custom_perceptron">Custom Perceptron</label><br>
+                </div>
+            </div>
+
+            <button type="submit">Predict</button>
+        </form>
+        <div id="result"></div>
+    </div>
+</body>
+</html>
